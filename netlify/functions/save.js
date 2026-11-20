@@ -76,8 +76,8 @@ exports.handler = async (event) => {
     const store = getStore({ 
       name: 'suzie-cakes', 
       consistency: 'strong',
-      siteID: process.env.1cc111ef-3bdc-46ea-99a8-8852e019d8f5,
-      token: process.env.nfp_m97p8VHp5r8B5kn4kqL6ePAYhqi5dD2G9af6
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_TOKEN
     });
     
     const existing = await store.get('data.json', { type: 'json' }) || {};
