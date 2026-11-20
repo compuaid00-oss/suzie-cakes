@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin · Suzie Cakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+
+<div class="mesh"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C9 2 7 4 7 6v2h10V6c0-2-2-4-5-4z" fill="currentColor"/>
+          <rect x="4" y="9" width="16" height="12" rx="3" fill="currentColor"/>
+        </svg>
+      </span>
+      <span>Admin Panel</span>
+    </a>
+    <button class="btn ghost small" onclick="adminLogout()" id="logoutBtn" style="display:none; margin-left:auto;">Logout</button>
+  </div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <div id="loginView">
+    <div class="login-card">
+      <div class="login-lock" id="loginLock">🔒</div>
+      <h2>Admin Access</h2>
+      <p class="subtitle" style="text-align:center;">Server-verified login</p>
+      <label>Username</label>
+      <input type="text" id="loginUser" autocomplete="off">
+      <label>Password</label>
+      <input type="password" id="loginPass">
+      <button class="btn primary" style="width:100%; margin-top:.6rem;" onclick="adminLogin()" id="loginBtn">Unlock</button>
+      <div id="loginError" class="error"></div>
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <div id="panelView" style="display:none;">
+    <div class="admin-topbar">
+      <div>
+        <h2>Admin Panel</h2>
+        <p class="subtitle">Session ends in <span id="sessionTimer">2:00:00</span></p>
+      </div>
+      <div style="display:flex; gap:.5rem;">
+        <button class="btn ghost small" onclick="refreshData()">↻ Reload data</button>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-section">
+        <h3><span class="icon">🎨</span> Colors &amp; Theme</h3>
+        <div class="color-grid">
+          <div class="color-row"><input type="color" id="cPrimary"><label>Primary</label></div>
+          <div class="color-row"><input type="color" id="cBg"><label>Background</label></div>
+          <div class="color-row"><input type="color" id="cText"><label>Text</label></div>
+          <div class="color-row"><input type="color" id="cAccent"><label>Accent</label></div>
+        </div>
+        <label>Background pattern</label>
+        <input type="text" id="patternInput" placeholder="CSS gradient or 'none'">
+        <div class="btn-row">
+          <button class="btn primary small" onclick="saveTheme()">Save Theme</button>
+          <button class="btn ghost small" onclick="resetTheme()">Reset</button>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3><span class="icon">🏷️</span> Restaurant Name</h3>
+        <input type="text" id="nameInput">
+        <button class="btn primary small" onclick="saveName()">Save Name</button>
+      </div>
+
+      <div class="admin-section span-2">
+        <h3><span class="icon">🍽️</span> Manage Menu</h3>
+        <div class="form-grid">
+          <input type="text" id="newName" placeholder="Dish name">
+          <input type="number" id="newPrice" placeholder="Price (K)" step="100">
+          <input type="text" id="newDesc" placeholder="Description" class="span-2">
+          <input type="text" id="newEmoji" placeholder="Emoji" maxlength="4">
+          <input type="text" id="newImage" placeholder="Image URL (optional)">
+        </div>
+        <button class="btn primary small" onclick="addDish()">+ Add Dish</button>
+        <div class="table-wrap"><table class="menu-table" id="menuTable"></table></div>
+      </div>
+
+      <div class="admin-section span-2">
+        <h3><span class="icon">📸</span> Manage Gallery</h3>
+        <div class="form-grid">
+          <input type="text" id="newImgUrl" placeholder="Image URL" class="span-2">
+          <input type="text" id="newImgCaption" placeholder="Caption" class="span-2">
+        </div>
+        <button class="btn primary small" onclick="addPhoto()">+ Add Photo</button>
+        <div class="table-wrap"><table class="menu-table" id="galleryTable"></table></div>
+      </div>
+
+      <div class="admin-section span-2">
+        <h3><span class="icon">🧩</span> Custom Home HTML</h3>
+        <textarea class="code" id="customHtml"></textarea>
+        <button class="btn primary small" onclick="saveHtml()">Save HTML</button>
+      </div>
+
+      <div class="admin-section danger-zone span-2">
+        <h3><span class="icon">⚠️</span> Danger Zone</h3>
+        <p class="hint">Resets menu, gallery, theme, custom HTML to defaults.</p>
+        <button class="btn danger small" onclick="confirmReset()">Reset ALL data</button>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem; text-align:center; color:var(--muted); font-size:.85rem;">
+      🔐 Every action is server-verified · <span id="lastSaved"></span>
+    </div>
+  </div>
+</main>
+
+<div id="confirmModal" class="modal" onclick="closeConfirm(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-icon">⚠️</div>
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn ghost small" onclick="closeConfirm(null, true)">Cancel</button>
+      <button class="btn danger small" id="confirmOk">Yes, proceed</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="admin.js"></script>
+</body>
+</html>

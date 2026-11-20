@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d81b60">
+<title>Suzie Cakes And Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+
+<div class="mesh"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="#" onclick="showPage('home');return false;">
+      <span class="brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C9 2 7 4 7 6v2h10V6c0-2-2-4-5-4z" fill="currentColor"/>
+          <rect x="4" y="9" width="16" height="12" rx="3" fill="currentColor"/>
+        </svg>
+      </span>
+      <span id="brandName">Suzie Cakes And Events</span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <button data-page="home" class="active">Home</button>
+      <button data-page="menu">Menu</button>
+      <button data-page="gallery">Gallery</button>
+      <button data-page="location">Location</button>
+      <button data-page="rate">Rate</button>
+    </nav>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </svg>
+      <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section id="home" class="page active">
+    <div class="bento">
+      <div class="card card-hero" style="grid-area: hero;">
+        <div class="hero-badge">
+          <span class="pulse"></span>
+          ⭐ 4.2★ · 50 Google reviews
+        </div>
+        <h1 class="hero-title">Sweet moments<br>start at <em>Suzie's</em></h1>
+        <p class="hero-text">
+          From celebration cakes to sizzling T-Bone and juicy shawarma —
+          Suzie Cakes And Events is your home of great taste and beautiful events.
+        </p>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="showPage('menu')">
+            Explore Menu
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <button class="btn ghost" onclick="showPage('gallery')">See Cakes</button>
+        </div>
+      </div>
+      <div class="card card-visual" style="grid-area: vis;">
+        <div class="cake-float"><div class="cake-big">🎂</div><div class="cake-tag">Fresh Daily</div></div>
+        <div class="cake-float small"><div class="cake-big">🧁</div><div class="cake-tag">Made with love</div></div>
+      </div>
+      <div class="card card-stat" style="grid-area: stat1;">
+        <div class="stat-num">4.2<small>★</small></div>
+        <div class="stat-label">Google rating</div>
+      </div>
+      <div class="card card-stat" style="grid-area: stat2;">
+        <div class="stat-num">50<small>+</small></div>
+        <div class="stat-label">Happy reviews</div>
+      </div>
+      <div class="card card-tag" style="grid-area: tag1;"><span>🎂</span> Custom cakes</div>
+      <div class="card card-tag" style="grid-area: tag2;"><span>🥩</span> Sizzling grills</div>
+    </div>
+    <div id="customBlock" class="custom-block"></div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" class="page">
+    <div class="page-head"><h2>Our Menu</h2><p class="subtitle">Handpicked dishes · Prices in Kwacha (K)</p></div>
+    <div id="menuGrid" class="menu-grid"></div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="page">
+    <div class="page-head"><h2>Photo Gallery</h2><p class="subtitle">Cakes, dishes &amp; events</p></div>
+    <div id="galleryGrid" class="gallery-grid"></div>
+  </section>
+
+   <!-- LOCATION -->
+  <section id="location" class="page">
+    <div class="page-head"><h2>Find Us</h2><p class="subtitle">Come visit — we'd love to serve you.</p></div>
+    <div class="google-rating">
+      <span class="gr-star">★</span><b>4.2</b>
+      <span class="gr-count">· 50 Google reviews</span>
+      <a href="https://maps.app.goo.gl/HzEsmVYKtie9c7nR9?g_st=ic" target="_blank" rel="noopener">See all →</a>
+    </div>
+    <div class="location-grid">
+      <div class="map-wrap">
+        <iframe src="https://www.google.com/maps?q=Suzie+Cakes+%26+Events+Kasama+Zambia&output=embed&z=17"
+          width="100%" height="100%" style="border:0;" allowfullscreen=""
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="info-stack">
+        <div class="info-card"><div class="info-icon">📍</div><div><h4>Address</h4><p>Machi Building &amp; Kasama Mall<br>Kasama, Northern Province<br>Zambia</p></div></div>
+        <div class="info-card"><div class="info-icon">🕒</div><div><h4>Opening Hours</h4><p>Mon – Sat: 8:00 AM – 9:00 PM<br>Sunday: 9:00 AM – 6:00 PM</p></div></div>
+        <div class="info-card"><div class="info-icon">📞</div><div><h4>Contact</h4><p>Call or WhatsApp for orders &amp; bookings.<br>
+          <a href="https://maps.app.goo.gl/HzEsmVYKtie9c7nR9?g_st=ic" target="_blank" rel="noopener">View on Google Maps →</a>
+        </p></div></div>
+        <a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=Suzie+Cakes+%26+Events+Kasama+Zambia" target="_blank" rel="noopener">🧭 Get Directions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RATE -->
+  <section id="rate" class="page">
+    <div class="page-head"><h2>Rate Our Food</h2><p class="subtitle">Tap stars — saved on this device</p></div>
+    <div id="rateList"></div>
+  </section>
+</main>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event, true)">✕</button>
+  <img id="lightboxImg" src="" alt="">
+  <div id="lightboxCaption" class="lightbox-caption"></div>
+</div>
+
+<nav class="bottom-nav">
+  <button data-page="home" class="active"><span>🏠</span>Home</button>
+  <button data-page="menu"><span>🍽️</span>Menu</button>
+  <button data-page="gallery"><span>📸</span>Gallery</button>
+  <button data-page="location"><span>📍</span>Location</button>
+  <button data-page="rate"><span>⭐</span>Rate</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
