@@ -1,9 +1,4 @@
-const store = getStore({
-  name: 'suzie-cakes',
-  consistency: 'strong',
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_TOKEN
-});
+const { getStore } = require('@netlify/blobs');
 
 const SEED = {
   restaurantName: "Suzie Cakes And Events",
@@ -36,7 +31,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    const store = getStore({ name: 'suzie-cakes', consistency: 'strong' });
+    const store = getStore({ 
+      name: 'suzie-cakes', 
+      consistency: 'strong',
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_TOKEN
+    });
+    
     let data = await store.get('data.json', { type: 'json' });
 
     if (!data) {
