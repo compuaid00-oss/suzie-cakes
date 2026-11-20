@@ -1,30 +1,30 @@
-const jwt = require('jsonwebtoken');
-const { getStore } = require('@netlify/blobs');
+import jwt from 'jsonwebtoken';
+import { getStore } from '@netlify/blobs';
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
+export default async (req, context) => {
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
 
-  const auth = event.headers.authorization || '';
+  const auth = req.headers.get('authorization') || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
   if (!token) {
-    return { statusCode: 401, body: JSON.stringify({ error: 'Missing token' }) };
+    return new Response(JSON.stringify({ error: 'Missing token' }), { status: 401 });
   }
 
   let payload;
   try {
     payload = jwt.verify(token, process.env.JWT_SECRET);
   } catch {
-    return { statusCode: 401, body: JSON.stringify({ error: 'Invalid or expired token' }) };
+    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401 });
   }
   if (payload.role !== 'admin') {
-    return { statusCode: 403, body: JSON.stringify({ error: 'Not authorized' }) };
+    return new Response(JSON.stringify({ error: 'Not authorized' }), { status: 403 });
   }
 
   let incoming;
-  try { incoming = JSON.parse(event.body || '{}'); }
-  catch { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
+  try { incoming = await req.json(); }
+  catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 }); }
 
   const allowed = ['restaurantName', 'menu', 'gallery', 'theme', 'customHtml'];
   const clean = {};
@@ -32,69 +32,30 @@ exports.handler = async (event) => {
     if (incoming[k] !== undefined) clean[k] = incoming[k];
   }
 
-  delete clean.updatedAt;
-
-  if (clean.restaurantName !== undefined && typeof clean.restaurantName !== 'string') {
-    return { statusCode: 400, body: JSON.stringify({ error: 'restaurantName must be string' }) };
+  if (clean.menu && !Array.isArray(clean.menu)) {
+    return new Response(JSON.stringify({ error: 'menu must be array' }), { status: 400 });
   }
-  if (clean.restaurantName && clean.restaurantName.length > 120) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'restaurantName too long' }) };
-  }
-
-  if (clean.menu !== undefined) {
-    if (!Array.isArray(clean.menu)) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'menu must be array' }) };
-    }
-    if (clean.menu.length > 200) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'menu too large (max 200 dishes)' }) };
-    }
-  }
-
-  if (clean.gallery !== undefined) {
-    if (!Array.isArray(clean.gallery)) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'gallery must be array' }) };
-    }
-    if (clean.gallery.length > 200) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'gallery too large (max 200 photos)' }) };
-    }
-  }
-
-  if (clean.theme !== undefined && (typeof clean.theme !== 'object' || clean.theme === null || Array.isArray(clean.theme))) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'theme must be object' }) };
-  }
-
-  if (clean.customHtml !== undefined) {
-    if (typeof clean.customHtml !== 'string') {
-      return { statusCode: 400, body: JSON.stringify({ error: 'customHtml must be string' }) };
-    }
-    if (clean.customHtml.length > 50000) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'customHtml too large (max 50KB)' }) };
-    }
+  if (clean.gallery && !Array.isArray(clean.gallery)) {
+    return new Response(JSON.stringify({ error: 'gallery must be array' }), { status: 400 });
   }
 
   try {
-    const store = getStore({ 
-      name: 'suzie-cakes', 
-      consistency: 'strong',
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_TOKEN
-    });
-    
+    const store = getStore('suzie-cakes');
     const existing = await store.get('data.json', { type: 'json' }) || {};
     const merged = { ...existing, ...clean };
     merged.updatedAt = new Date().toISOString();
 
     await store.setJSON('data.json', merged);
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ok: true, updatedAt: merged.updatedAt })
-    };
+    return new Response(JSON.stringify({ ok: true, updatedAt: merged.updatedAt }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to save data', details: err.message })
-    };
+    return new Response(JSON.stringify({ error: 'Failed to save data', details: err.message }), { status: 500 });
   }
+};
+
+export const config = {
+  path: "/api/save"
 };
