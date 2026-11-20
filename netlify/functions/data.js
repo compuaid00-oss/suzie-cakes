@@ -1,4 +1,4 @@
-const { getStore } = require('@netlify/blobs');
+import { getStore } from '@netlify/blobs';
 
 const SEED = {
   restaurantName: "Suzie Cakes And Events",
@@ -25,19 +25,13 @@ const SEED = {
   customHtml: ""
 };
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
+export default async (req, context) => {
+  if (req.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
 
   try {
-    const store = getStore({ 
-      name: 'suzie-cakes', 
-      consistency: 'strong',
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_TOKEN
-    });
-    
+    const store = getStore('suzie-cakes');
     let data = await store.get('data.json', { type: 'json' });
 
     if (!data) {
@@ -45,18 +39,18 @@ exports.handler = async (event) => {
       await store.setJSON('data.json', data);
     }
 
-    return {
-      statusCode: 200,
+    return new Response(JSON.stringify(data), {
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=30, stale-while-revalidate=60'
-      },
-      body: JSON.stringify(data)
-    };
+      }
+    });
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to load data', details: err.message })
-    };
+    return new Response(JSON.stringify({ error: 'Failed to load data', details: err.message }), { status: 500 });
   }
+};
+
+export const config = {
+  path: "/api/data"
 };
